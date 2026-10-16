@@ -583,7 +583,7 @@
 
     .episodes {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(3, 1fr);
       gap: 16px;
       margin: 0 28px 28px;
     }
@@ -947,6 +947,689 @@
       font-weight: 700;
       font-size: 1.35rem;
       color: var(--gold-light);
+    }
+
+    /* =========================================
+       EPISODE 3 CASTING & HERO VOTING ARENA
+       ========================================= */
+    .ep3-voting-arena {
+      margin: 0 28px 36px;
+      padding: 34px 26px;
+      background: radial-gradient(ellipse 100% 70% at 50% 0%, rgba(141, 38, 56, 0.35) 0%, rgba(14, 9, 15, 0.95) 75%),
+                  rgba(18, 12, 19, 0.92);
+      border: 1px solid var(--border-gold-bright);
+      border-radius: 16px;
+      box-shadow: 0 16px 50px rgba(0, 0, 0, 0.85), 0 0 40px rgba(245, 207, 135, 0.18);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ep3-voting-arena::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 10%;
+      right: 10%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+
+    .voting-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .voting-tag-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      background: rgba(141, 38, 56, 0.4);
+      border: 1px solid var(--border-gold);
+      border-radius: 30px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+
+    .pulse-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ff3366;
+      box-shadow: 0 0 10px #ff3366;
+      animation: pulseDot 1.5s infinite;
+    }
+
+    .voting-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.8rem, 5vw, 2.7rem);
+      font-weight: 800;
+      color: var(--gold-light);
+      margin-bottom: 10px;
+      letter-spacing: 0.04em;
+      text-shadow: 0 4px 20px rgba(245, 207, 135, 0.25);
+    }
+
+    .voting-lead-status {
+      font-size: 0.95rem;
+      color: #e2d2c8;
+      max-width: 650px;
+      margin: 0 auto 22px;
+      line-height: 1.6;
+    }
+
+    .voting-lead-status strong {
+      color: var(--gold);
+    }
+
+    .casting-status-ribbon {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    .status-pill-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-gold);
+      padding: 10px 14px;
+      border-radius: 10px;
+      text-align: left;
+    }
+
+    .status-pill-item.highlight {
+      background: rgba(141, 38, 56, 0.3);
+      border-color: var(--gold);
+      box-shadow: 0 0 18px rgba(141, 38, 56, 0.4);
+    }
+
+    .status-icon {
+      font-size: 1.6rem;
+      flex-shrink: 0;
+    }
+
+    .status-sub {
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .status-main {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--gold-light);
+    }
+
+    /* Nominees Grid */
+    .nominees-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 18px;
+      margin-bottom: 32px;
+    }
+
+    .nominee-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-gold);
+      border-radius: 14px;
+      padding: 22px 16px 18px;
+      text-align: center;
+      position: relative;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .nominee-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--gold);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7), 0 0 25px rgba(245, 207, 135, 0.2);
+    }
+
+    .nominee-card.leader {
+      border: 1.5px solid var(--gold);
+      background: linear-gradient(170deg, rgba(245, 207, 135, 0.08) 0%, rgba(141, 38, 56, 0.22) 100%);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.7), 0 0 25px rgba(245, 207, 135, 0.3);
+    }
+
+    .nominee-card.user-voted {
+      border-color: #ffe1a6;
+      box-shadow: 0 0 0 2px rgba(245, 207, 135, 0.6), 0 15px 35px rgba(0, 0, 0, 0.8);
+    }
+
+    .card-leader-badge {
+      position: absolute;
+      top: -11px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, #ffe1a6, #b8863b);
+      color: #1a0b12;
+      font-size: 0.65rem;
+      font-weight: 800;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 4px 14px;
+      border-radius: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      z-index: 2;
+    }
+
+    .nominee-avatar-wrap {
+      width: 110px;
+      height: 110px;
+      margin: 10px auto 14px;
+      position: relative;
+    }
+
+    .nominee-avatar-img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--gold);
+      box-shadow: 0 0 0 5px rgba(245, 207, 135, 0.15), 0 10px 25px rgba(0, 0, 0, 0.6);
+      transition: transform 0.3s ease;
+    }
+
+    .nominee-card:hover .nominee-avatar-img {
+      transform: scale(1.05);
+    }
+
+    .nominee-custom-avatar {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #8d2638, #2a0b14);
+      border: 3px solid var(--gold);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cinzel', serif;
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--gold-light);
+      box-shadow: 0 0 0 5px rgba(245, 207, 135, 0.15), 0 10px 25px rgba(0, 0, 0, 0.6);
+    }
+
+    .nominee-avatar-badge {
+      position: absolute;
+      bottom: 2px;
+      right: 2px;
+      background: rgba(18, 12, 19, 0.95);
+      border: 1px solid var(--gold);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+    }
+
+    .nominee-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.55rem;
+      font-weight: 700;
+      color: var(--gold-light);
+      margin-bottom: 4px;
+      line-height: 1.2;
+    }
+
+    .nominee-tagline {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 14px;
+      min-height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1.35;
+    }
+
+    /* Vote Stats & Bar */
+    .vote-metrics {
+      margin-bottom: 16px;
+    }
+
+    .vote-count-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 0.82rem;
+      color: var(--gold);
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .vote-tally-num {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .vote-bar-track {
+      height: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid rgba(245, 207, 135, 0.2);
+    }
+
+    .vote-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #8d2638, #b8863b, #f5cf87);
+      border-radius: 10px;
+      transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Vote Button */
+    .vote-btn {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 30px;
+      border: 1px solid var(--gold);
+      background: rgba(245, 207, 135, 0.08);
+      color: var(--gold);
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.25s ease;
+    }
+
+    .vote-btn:hover {
+      background: linear-gradient(135deg, #ffe1a6, #e2b368);
+      color: #1a0b12;
+      box-shadow: 0 4px 18px rgba(245, 207, 135, 0.45);
+      transform: translateY(-2px);
+    }
+
+    .vote-btn.voted {
+      background: linear-gradient(135deg, #8d2638, #b3394e);
+      color: #fff;
+      border-color: #f5cf87;
+      box-shadow: 0 0 16px rgba(141, 38, 56, 0.6);
+    }
+
+    /* Self Nomination Box */
+    .nomination-box {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px dashed rgba(245, 207, 135, 0.5);
+      border-radius: 14px;
+      padding: 24px;
+      margin-top: 20px;
+    }
+
+    .nomination-box-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .nomination-icon {
+      font-size: 2.2rem;
+      flex-shrink: 0;
+    }
+
+    .nomination-box-header h3 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.25rem;
+      color: var(--gold-light);
+      margin-bottom: 3px;
+    }
+
+    .nomination-box-header p {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .nomination-form .form-row-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .input-wrap label {
+      display: block;
+      font-size: 0.76rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .input-wrap input {
+      width: 100%;
+      background: rgba(10, 8, 12, 0.85);
+      border: 1px solid var(--border-gold);
+      border-radius: 8px;
+      padding: 12px 14px;
+      color: var(--gold-light);
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .input-wrap input:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 12px rgba(245, 207, 135, 0.35);
+    }
+
+    /* Photo Upload & Preview */
+    .photo-upload-section {
+      margin-bottom: 18px;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-gold);
+      border-radius: 12px;
+    }
+
+    .photo-upload-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .upload-subhint {
+      font-size: 0.74rem;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    .photo-uploader-box {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .photo-preview-wrap {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      border: 2px dashed var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background: rgba(0, 0, 0, 0.4);
+      flex-shrink: 0;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    }
+
+    .photo-placeholder-icon {
+      font-size: 1.8rem;
+      opacity: 0.7;
+    }
+
+    .photo-preview-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    .photo-preview-img.hidden,
+    .photo-placeholder-icon.hidden,
+    .remove-photo-btn.hidden {
+      display: none !important;
+    }
+
+    .remove-photo-btn {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      background: rgba(141, 38, 56, 0.95);
+      border: 1px solid var(--gold);
+      color: #fff;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      transition: transform 0.2s;
+    }
+
+    .remove-photo-btn:hover {
+      transform: scale(1.1);
+    }
+
+    .photo-uploader-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .custom-file-upload-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 18px;
+      border-radius: 20px;
+      background: rgba(245, 207, 135, 0.12);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      width: fit-content;
+      transition: all 0.25s ease;
+    }
+
+    .custom-file-upload-btn:hover {
+      background: var(--gold);
+      color: #1a0b12;
+      box-shadow: 0 4px 15px rgba(245, 207, 135, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .custom-file-upload-btn input[type="file"] {
+      display: none;
+    }
+
+    .photo-upload-filename {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .avatar-style-select {
+      margin-bottom: 18px;
+    }
+
+    .style-select-label {
+      display: block;
+      font-size: 0.76rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .archetype-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .archetype-chip {
+      cursor: pointer;
+    }
+
+    .archetype-chip input {
+      display: none;
+    }
+
+    .archetype-chip span {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-gold);
+      font-size: 0.8rem;
+      color: var(--muted);
+      transition: all 0.2s ease;
+    }
+
+    .archetype-chip input:checked + span {
+      background: rgba(141, 38, 56, 0.45);
+      border-color: var(--gold);
+      color: var(--gold-light);
+      font-weight: 600;
+      box-shadow: 0 0 10px rgba(245, 207, 135, 0.3);
+    }
+
+    .submit-nomination-btn {
+      width: 100%;
+      padding: 14px 24px;
+      border: 0;
+      border-radius: 30px;
+      background: linear-gradient(135deg, #ffe1a6 0%, #e2b368 50%, #b8863b 100%);
+      color: #1a0b12;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.98rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 20px rgba(245, 207, 135, 0.4);
+      transition: all 0.25s ease;
+    }
+
+    .submit-nomination-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7), 0 0 30px rgba(245, 207, 135, 0.6);
+    }
+
+    .voting-actions-bar {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .action-link-btn {
+      background: transparent;
+      border: 1px solid var(--border-gold);
+      color: var(--muted);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .action-link-btn:hover {
+      color: var(--gold);
+      border-color: var(--gold);
+    }
+
+    .action-link-btn.danger:hover {
+      color: #ff9999;
+      border-color: #ff6666;
+    }
+
+    /* Episode 3 Card in Story Unfolds */
+    .ep3-card {
+      border: 1.5px solid var(--border-gold-bright) !important;
+      background: radial-gradient(circle at 50% 0%, rgba(141, 38, 56, 0.3), rgba(20, 15, 22, 0.85)) !important;
+    }
+
+    .ep3-live-badge {
+      background: rgba(141, 38, 56, 0.9) !important;
+      border-color: #ff5e7e !important;
+      color: #fff !important;
+      box-shadow: 0 0 12px rgba(255, 94, 126, 0.6);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #fff;
+      animation: pulseDot 1s infinite;
+    }
+
+    .ep-hover-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(10, 8, 12, 0.65);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      backdrop-filter: blur(2px);
+    }
+
+    .ep3-card:hover .ep-hover-overlay {
+      opacity: 1;
+    }
+
+    .ep-vote-btn {
+      padding: 8px 18px;
+      background: linear-gradient(135deg, #ffe1a6, #b8863b);
+      color: #1a0b12;
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border-radius: 20px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8);
+    }
+
+    .ep3-subcaption {
+      font-size: 0.76rem;
+      color: var(--gold);
+      text-align: center;
+      letter-spacing: 0.05em;
+      margin-top: 4px;
     }
 
     /* =========================================
@@ -1406,6 +2089,7 @@
       .pricing-box,
       .venue,
       .cast,
+      .ep3-voting-arena,
       .credits {
         margin-left: 14px;
         margin-right: 14px;
@@ -1416,7 +2100,22 @@
       }
 
       .episodes {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .casting-status-ribbon {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      .nomination-form .form-row-grid {
+        grid-template-columns: 1fr;
         gap: 10px;
+      }
+
+      .ep3-voting-arena {
+        padding: 24px 14px;
       }
 
       .episode {
@@ -1565,6 +2264,19 @@
           <div class="ep">EPISODE 2</div>
           <div class="caption">The Next Chapter</div>
         </article>
+
+        <article class="episode ep3-card" id="ep3TeaserCard" data-title="Episode 3: The New Lead" onclick="scrollToVoting()" role="button" tabindex="0">
+          <div class="episode-img-wrapper">
+            <span class="episode-badge ep3-live-badge"><span class="badge-dot"></span>Ep. 03 · CASTING CALL</span>
+            <img src="assets/ep3.jpg" alt="Episode 3 — Mystery Male Lead" loading="lazy">
+            <div class="ep-hover-overlay">
+              <span class="ep-vote-btn">Vote for Lead 🗳️</span>
+            </div>
+          </div>
+          <div class="ep">EPISODE 3</div>
+          <div class="caption">The New Hero?</div>
+          <div class="ep3-subcaption">Heroine Confirmed · Male Lead Open</div>
+        </article>
       </section>
 
       <!-- DATES -->
@@ -1635,7 +2347,7 @@
             <div class="person-img-wrapper">
               <img src="assets/satwik.jpg" alt="Satwik Dubey - Hero" loading="lazy">
             </div>
-            <div class="role">Hero</div>
+            <div class="role">Hero (Ep 1 &amp; 2)</div>
             <div class="name">Satwik Dubey</div>
           </div>
 
@@ -1643,9 +2355,148 @@
             <div class="person-img-wrapper">
               <img src="assets/prakhar.jpg" alt="Prakhar Raj - Heroine" loading="lazy">
             </div>
-            <div class="role">Heroine</div>
+            <div class="role">Heroine (All Episodes)</div>
             <div class="name">Prakhar Raj</div>
           </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           EPISODE 3 MALE LEAD VOTING & NOMINATION ARENA
+           ========================================== -->
+      <section class="ep3-voting-arena" id="ep3-voting-arena">
+        <div class="voting-header">
+          <div class="voting-tag-pill">
+            <span class="pulse-indicator"></span>
+            <span>PUBLIC CASTING POLL · AUDIENCE VOTE</span>
+          </div>
+          <h2 class="voting-title">Episode 3: Choose the Male Lead</h2>
+          <p class="voting-lead-status">
+            <strong>Female Lead Locked:</strong> Prakhar Raj 👑 remains the undisputed Heroine!
+            <br>
+            <span>The directorate has opened official casting for the new Hero to star opposite her in Episode 3. Vote for your favorite candidate or submit your own nomination below.</span>
+          </p>
+
+          <div class="casting-status-ribbon">
+            <div class="status-pill-item">
+              <span class="status-icon">👑</span>
+              <div>
+                <div class="status-sub">Heroine (Confirmed)</div>
+                <div class="status-main">Prakhar Raj</div>
+              </div>
+            </div>
+            <div class="status-pill-item highlight">
+              <span class="status-icon">🎭</span>
+              <div>
+                <div class="status-sub">Hero (Episode 3)</div>
+                <div class="status-main">Audience Decision</div>
+              </div>
+            </div>
+            <div class="status-pill-item">
+              <span class="status-icon">🗳️</span>
+              <div>
+                <div class="status-sub">Total Votes Cast</div>
+                <div class="status-main" id="totalVotesDisplay">0</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Candidate Cards Grid -->
+        <div class="nominees-grid" id="nomineesGrid">
+          <!-- Rendered dynamically by JS with initial candidates + user candidates -->
+        </div>
+
+        <!-- Self-Nomination Section: "Want to be the Hero?" -->
+        <div class="nomination-box" id="nominationBox">
+          <div class="nomination-box-header">
+            <div class="nomination-icon">🌟</div>
+            <div>
+              <h3>Want to Star in Episode 3? Throw Your Hat in the Ring!</h3>
+              <p>Self-nominate yourself or a candidate for the Male Lead role opposite Prakhar Raj.</p>
+            </div>
+          </div>
+
+          <form id="nominationForm" class="nomination-form" onsubmit="handleNominationSubmit(event)">
+            <div class="form-row-grid">
+              <div class="input-wrap">
+                <label for="candidateName">Candidate Full Name *</label>
+                <input type="text" id="candidateName" placeholder="Enter Full Name (e.g. Aryan Sharma)" required autocomplete="name" maxlength="40">
+              </div>
+              <div class="input-wrap">
+                <label for="candidatePitch">Punchline / Bio / Dialogue</label>
+                <input type="text" id="candidatePitch" placeholder="e.g. Six-Pack Charisma · Born to Romance" maxlength="60">
+              </div>
+            </div>
+
+            <!-- PHOTO UPLOAD & PREVIEW (OPTIONAL) -->
+            <div class="photo-upload-section">
+              <div class="photo-upload-header">
+                <span class="style-select-label" style="margin-bottom:0;">Candidate Photo (Optional)</span>
+                <span class="upload-subhint">Upload your photo OR continue with name-only</span>
+              </div>
+              
+              <div class="photo-uploader-box">
+                <div class="photo-preview-wrap" id="photoPreviewWrap">
+                  <div class="photo-placeholder-icon" id="previewPlaceholder">
+                    <span>📷</span>
+                  </div>
+                  <img id="photoPreviewImg" class="photo-preview-img hidden" alt="Candidate Photo Preview">
+                  <button type="button" class="remove-photo-btn hidden" id="removePhotoBtn" title="Remove photo">&times;</button>
+                </div>
+
+                <div class="photo-uploader-actions">
+                  <label for="candidatePhoto" class="custom-file-upload-btn">
+                    <span>📁 Upload Photo (Optional)</span>
+                    <input type="file" id="candidatePhoto" accept="image/*">
+                  </label>
+                  <span class="photo-upload-filename" id="photoFileName">No photo chosen · Name-only nomination allowed</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="avatar-style-select">
+              <span class="style-select-label">Choose Persona Archetype:</span>
+              <div class="archetype-chips">
+                <label class="archetype-chip">
+                  <input type="radio" name="archetype" value="crown" checked>
+                  <span>👑 Royal Hero</span>
+                </label>
+                <label class="archetype-chip">
+                  <input type="radio" name="archetype" value="fire">
+                  <span>🔥 Romantic Stallion</span>
+                </label>
+                <label class="archetype-chip">
+                  <input type="radio" name="archetype" value="sunglasses">
+                  <span>🕶️ Action Star</span>
+                </label>
+                <label class="archetype-chip">
+                  <input type="radio" name="archetype" value="guitar">
+                  <span>🎸 Music Maestro</span>
+                </label>
+                <label class="archetype-chip">
+                  <input type="radio" name="archetype" value="spark">
+                  <span>⚡ Wildcard Challenger</span>
+                </label>
+              </div>
+            </div>
+
+            <button type="submit" class="submit-nomination-btn">
+              <span>✦</span>
+              <span>Register Nomination &amp; Enter Poll</span>
+              <span>✦</span>
+            </button>
+          </form>
+        </div>
+
+        <!-- Voting Footer / Discreet Reset -->
+        <div class="voting-actions-bar">
+          <button type="button" class="action-link-btn" onclick="sharePoll()">
+            <span>🔗</span> Copy Poll Link
+          </button>
+          <button type="button" class="action-link-btn danger" onclick="resetVotesToDefault()">
+            <span>↺</span> Reset Poll Data
+          </button>
         </div>
       </section>
 
@@ -2102,6 +2953,404 @@
         showToast('🔇 Video audio muted');
       }
     });
+
+    // ==========================================
+    // EPISODE 3 VOTING & NOMINATION SYSTEM
+    // ==========================================
+    const DEFAULT_NOMINEES = [
+      {
+        id: 'vaibhav_prajapat',
+        name: 'Vaibhav Prajapat',
+        pitch: 'The Crowd Favorite · High-Voltage Charisma',
+        image: 'assets/vaibhav.jpg',
+        archetype: 'crown',
+        votes: 142,
+        badge: 'Fan Favorite'
+      },
+      {
+        id: 'lalit_yadav',
+        name: 'Lalit Yadav',
+        pitch: 'The Rebel Stallion · Raw Passion & Presence',
+        image: 'assets/lalit.jpg',
+        archetype: 'fire',
+        votes: 138,
+        badge: 'Top Contender'
+      },
+      {
+        id: 'inder_yadav',
+        name: 'Inder Yadav',
+        pitch: 'The Music Maestro · Ready for Silver Screen',
+        image: 'assets/inder.jpg',
+        archetype: 'guitar',
+        votes: 135,
+        badge: 'Official Nominee'
+      }
+    ];
+
+    const STORAGE_KEY_NOMINEES = 'prakhar_ep3_nominees_v4';
+    const STORAGE_KEY_USER_VOTE = 'prakhar_ep3_user_vote_v4';
+
+    function getNominees() {
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY_NOMINEES);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length >= 3) return parsed;
+        }
+      } catch (e) {
+        console.warn('Failed to parse nominees from localStorage:', e);
+      }
+      return JSON.parse(JSON.stringify(DEFAULT_NOMINEES));
+    }
+
+    function saveNominees(list) {
+      localStorage.setItem(STORAGE_KEY_NOMINEES, JSON.stringify(list));
+    }
+
+    function getUserVote() {
+      return localStorage.getItem(STORAGE_KEY_USER_VOTE);
+    }
+
+    function setUserVote(id) {
+      if (id) {
+        localStorage.setItem(STORAGE_KEY_USER_VOTE, id);
+      } else {
+        localStorage.removeItem(STORAGE_KEY_USER_VOTE);
+      }
+    }
+
+    function getArchetypeEmoji(archetype) {
+      const map = {
+        crown: '👑',
+        fire: '🔥',
+        sunglasses: '🕶️',
+        guitar: '🎸',
+        spark: '⚡'
+      };
+      return map[archetype] || '🌟';
+    }
+
+    function getInitials(name) {
+      return name
+        .split(' ')
+        .map(n => n[0])
+        .filter(Boolean)
+        .slice(0, 2)
+        .join('')
+        .toUpperCase();
+    }
+
+    function renderVotingArena() {
+      const nominees = getNominees();
+      const userVote = getUserVote();
+      const grid = document.getElementById('nomineesGrid');
+      const totalDisplay = document.getElementById('totalVotesDisplay');
+      if (!grid || !totalDisplay) return;
+
+      const totalVotes = nominees.reduce((acc, n) => acc + (n.votes || 0), 0);
+      totalDisplay.textContent = totalVotes.toLocaleString('en-IN');
+
+      // Determine the leader (highest vote count)
+      let maxVotes = -1;
+      let leaderId = null;
+      nominees.forEach(n => {
+        if (n.votes > maxVotes) {
+          maxVotes = n.votes;
+          leaderId = n.id;
+        }
+      });
+
+      grid.innerHTML = '';
+
+      nominees.forEach(nominee => {
+        const isLeader = nominee.id === leaderId && nominee.votes > 0;
+        const isUserVoted = nominee.id === userVote;
+        const percentage = totalVotes > 0 ? Math.round((nominee.votes / totalVotes) * 100) : 0;
+        const emoji = getArchetypeEmoji(nominee.archetype);
+
+        const card = document.createElement('div');
+        card.className = `nominee-card ${isLeader ? 'leader' : ''} ${isUserVoted ? 'user-voted' : ''}`;
+        card.id = `nominee-${nominee.id}`;
+
+        let leaderBadgeHtml = '';
+        if (isLeader) {
+          leaderBadgeHtml = `
+            <div class="card-leader-badge">
+              <span>👑</span>
+              <span>Front-Runner (${percentage}%)</span>
+            </div>
+          `;
+        } else if (nominee.isCustom) {
+          leaderBadgeHtml = `
+            <div class="card-leader-badge" style="background: linear-gradient(135deg, #8d2638, #5a1420); color: #fff;">
+              <span>⭐</span>
+              <span>Audience Nominee</span>
+            </div>
+          `;
+        }
+
+        let avatarHtml = '';
+        if (nominee.image) {
+          avatarHtml = `
+            <img src="${nominee.image}" alt="${nominee.name}" class="nominee-avatar-img" loading="lazy">
+            <div class="nominee-avatar-badge">${emoji}</div>
+          `;
+        } else {
+          avatarHtml = `
+            <div class="nominee-custom-avatar">
+              <span>${getInitials(nominee.name)}</span>
+            </div>
+            <div class="nominee-avatar-badge">${emoji}</div>
+          `;
+        }
+
+        card.innerHTML = `
+          ${leaderBadgeHtml}
+          <div>
+            <div class="nominee-avatar-wrap">
+              ${avatarHtml}
+            </div>
+            <h3 class="nominee-name">${nominee.name}</h3>
+            <div class="nominee-tagline">${nominee.pitch || 'Candidate for Episode 3 Hero'}</div>
+          </div>
+
+          <div>
+            <div class="vote-metrics">
+              <div class="vote-count-row">
+                <span>Current Standing</span>
+                <span><span class="vote-tally-num">${nominee.votes}</span> votes (${percentage}%)</span>
+              </div>
+              <div class="vote-bar-track">
+                <div class="vote-bar-fill" style="width: ${percentage}%"></div>
+              </div>
+            </div>
+
+            <button type="button" class="vote-btn ${isUserVoted ? 'voted' : ''}" onclick="castVote('${nominee.id}')">
+              <span>${isUserVoted ? '✓' : '🗳️'}</span>
+              <span>${isUserVoted ? 'Your Vote Cast' : 'Vote for ' + nominee.name.split(' ')[0]}</span>
+            </button>
+          </div>
+        `;
+
+        grid.appendChild(card);
+      });
+    }
+
+    function castVote(candidateId) {
+      const nominees = getNominees();
+      const currentVote = getUserVote();
+
+      if (currentVote === candidateId) {
+        showToast('✓ You have already cast your vote for this candidate!');
+        return;
+      }
+
+      // If user had a prior vote, decrement previous and increment new
+      nominees.forEach(n => {
+        if (n.id === currentVote && n.votes > 0) {
+          n.votes -= 1;
+        }
+        if (n.id === candidateId) {
+          n.votes += 1;
+        }
+      });
+
+      saveNominees(nominees);
+      setUserVote(candidateId);
+      renderVotingArena();
+
+      // Confetti celebration
+      if (typeof confetti === 'function') {
+        confetti({
+          particleCount: 85,
+          spread: 70,
+          origin: { y: 0.7 },
+          colors: ['#f5cf87', '#fff0d2', '#8d2638', '#ffd700']
+        });
+      }
+
+      const candidate = nominees.find(n => n.id === candidateId);
+      showToast(`🗳️ Vote recorded for ${candidate ? candidate.name : 'Candidate'}!`);
+    }
+
+    function handleNominationSubmit(event) {
+      event.preventDefault();
+      const nameInput = document.getElementById('candidateName');
+      const pitchInput = document.getElementById('candidatePitch');
+      const archetypeInput = document.querySelector('input[name="archetype"]:checked');
+
+      const name = nameInput.value.trim();
+      const pitch = pitchInput.value.trim();
+      const archetype = archetypeInput ? archetypeInput.value : 'crown';
+
+      if (!name) {
+        showToast('⚠️ Please enter candidate full name.');
+        return;
+      }
+
+      const nominees = getNominees();
+
+      // Check duplicate
+      const exists = nominees.some(n => n.name.toLowerCase() === name.toLowerCase());
+      if (exists) {
+        showToast('⚠️ This candidate is already nominated! You can vote for them.');
+        return;
+      }
+
+      const newId = 'candidate_' + Date.now();
+      const newCandidate = {
+        id: newId,
+        name: name,
+        pitch: pitch || 'Wildcard Challenger · Ready to Star Opposite Prakhar',
+        archetype: archetype,
+        image: currentUploadedPhotoData || null,
+        votes: 1, // starter vote
+        isCustom: true
+      };
+
+      // If user already voted for someone else, decrement their prior vote
+      const currentVote = getUserVote();
+      if (currentVote) {
+        nominees.forEach(n => {
+          if (n.id === currentVote && n.votes > 0) {
+            n.votes -= 1;
+          }
+        });
+      }
+
+      // Add to list and set vote to new candidate
+      nominees.push(newCandidate);
+      saveNominees(nominees);
+      setUserVote(newId);
+
+      // Reset form and photo uploader
+      nameInput.value = '';
+      pitchInput.value = '';
+      resetPhotoUploader();
+
+      renderVotingArena();
+
+      // Celebrate
+      if (typeof confetti === 'function') {
+        confetti({
+          particleCount: 120,
+          spread: 100,
+          origin: { y: 0.6 },
+          colors: ['#f5cf87', '#fff0d2', '#8d2638', '#00ffcc', '#ffd700']
+        });
+      }
+
+      showToast(`🎉 Welcome to the race, ${name}! Your nomination is published!`);
+
+      // Scroll to newly added card
+      setTimeout(() => {
+        const el = document.getElementById(`nominee-${newId}`);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 250);
+    }
+
+    function scrollToVoting() {
+      const arena = document.getElementById('ep3-voting-arena');
+      if (arena) {
+        arena.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    function sharePoll() {
+      const shareUrl = window.location.href.split('#')[0] + '#ep3-voting-arena';
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(shareUrl).then(() => {
+          showToast('🔗 Voting Arena link copied to clipboard!');
+        }).catch(() => {
+          showToast('🔗 Link: ' + shareUrl);
+        });
+      } else {
+        showToast('🔗 Link: ' + shareUrl);
+      }
+    }
+
+    function resetVotesToDefault() {
+      if (confirm('Reset candidate list and vote tallies back to default?')) {
+        localStorage.removeItem(STORAGE_KEY_NOMINEES);
+        localStorage.removeItem(STORAGE_KEY_USER_VOTE);
+        renderVotingArena();
+        showToast('↺ Poll data reset to original nominees.');
+      }
+    }
+
+    // Photo Upload Handling & Compression for Self-Nomination
+    let currentUploadedPhotoData = null;
+    const photoInput = document.getElementById('candidatePhoto');
+    const photoPreviewImg = document.getElementById('photoPreviewImg');
+    const previewPlaceholder = document.getElementById('previewPlaceholder');
+    const removePhotoBtn = document.getElementById('removePhotoBtn');
+    const photoFileName = document.getElementById('photoFileName');
+
+    function resetPhotoUploader() {
+      currentUploadedPhotoData = null;
+      if (photoInput) photoInput.value = '';
+      if (photoPreviewImg) {
+        photoPreviewImg.src = '';
+        photoPreviewImg.classList.add('hidden');
+      }
+      if (previewPlaceholder) previewPlaceholder.classList.remove('hidden');
+      if (removePhotoBtn) removePhotoBtn.classList.add('hidden');
+      if (photoFileName) photoFileName.textContent = 'No photo chosen · Name-only nomination allowed';
+    }
+
+    if (photoInput) {
+      photoInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        photoFileName.textContent = file.name;
+
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          const img = new Image();
+          img.onload = function() {
+            // Compress and resize image to max 400x400 to keep localStorage fast and lightweight
+            const maxDim = 400;
+            let w = img.width;
+            let h = img.height;
+            if (w > maxDim || h > maxDim) {
+              if (w > h) {
+                h = Math.round((h * maxDim) / w);
+                w = maxDim;
+              } else {
+                w = Math.round((w * maxDim) / h);
+                h = maxDim;
+              }
+            }
+
+            const canvas = document.createElement('canvas');
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, w, h);
+
+            const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.85);
+            currentUploadedPhotoData = compressedDataUrl;
+
+            photoPreviewImg.src = compressedDataUrl;
+            photoPreviewImg.classList.remove('hidden');
+            previewPlaceholder.classList.add('hidden');
+            removePhotoBtn.classList.remove('hidden');
+          };
+          img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    if (removePhotoBtn) {
+      removePhotoBtn.addEventListener('click', resetPhotoUploader);
+    }
+
+    // Initialize Voting Arena
+    renderVotingArena();
   </script>
 </body>
 </html>
