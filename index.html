@@ -12,6 +12,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <!-- Canvas Confetti -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <!-- Firebase App & Firestore SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
   <style>
     :root {
@@ -2955,7 +2958,7 @@
     });
 
     // ==========================================
-    // EPISODE 3 VOTING & NOMINATION SYSTEM
+    // EPISODE 3 VOTING & NOMINATION SYSTEM (FIREBASE REAL-TIME)
     // ==========================================
     const DEFAULT_NOMINEES = [
       {
@@ -2990,7 +2993,29 @@
     const STORAGE_KEY_NOMINEES = 'prakhar_ep3_nominees_v4';
     const STORAGE_KEY_USER_VOTE = 'prakhar_ep3_user_vote_v4';
 
-    function getNominees() {
+    // Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCOkHk2cCwYECjMTsm32U6Op9oG0TR2tKg",
+      authDomain: "grabtickets-fb7cb.firebaseapp.com",
+      projectId: "grabtickets-fb7cb",
+      storageBucket: "grabtickets-fb7cb.firebasestorage.app",
+      messagingSenderId: "567379772895",
+      appId: "1:567379772895:web:0498bbc98e5e4de20b306a",
+      measurementId: "G-SW7H5XD863"
+    };
+
+    let db = null;
+    try {
+      if (typeof firebase !== 'undefined' && firebase.initializeApp) {
+        firebase.initializeApp(firebaseConfig);
+        db = firebase.firestore();
+        console.log('⚡ Firebase Firestore connected');
+      }
+    } catch (e) {
+      console.warn('Firebase initialization warning:', e);
+    }
+
+    function getLocalStoredNominees() {
       try {
         const stored = localStorage.getItem(STORAGE_KEY_NOMINEES);
         if (stored) {
@@ -3003,8 +3028,19 @@
       return JSON.parse(JSON.stringify(DEFAULT_NOMINEES));
     }
 
+    let activeNominees = getLocalStoredNominees();
+
+    function getNominees() {
+      return (activeNominees && activeNominees.length > 0) ? activeNominees : getLocalStoredNominees();
+    }
+
     function saveNominees(list) {
-      localStorage.setItem(STORAGE_KEY_NOMINEES, JSON.stringify(list));
+      activeNominees = list;
+      try {
+        localStorage.setItem(STORAGE_KEY_NOMINEES, JSON.stringify(list));
+      } catch (e) {
+        console.warn('Failed to save nominees to localStorage:', e);
+      }
     }
 
     function getUserVote() {
@@ -3118,7 +3154,7 @@
             <div class="vote-metrics">
               <div class="vote-count-row">
                 <span>Current Standing</span>
-                <span><span class="vote-tally-num">${nominee.votes}</span> votes (${percentage}%)</span>
+                <span><span class="vote-tally-num">${nominee.votes || 0}</span> votes (${percentage}%)</span>
               </div>
               <div class="vote-bar-track">
                 <div class="vote-bar-fill" style="width: ${percentage}%"></div>
@@ -3145,13 +3181,13 @@
         return;
       }
 
-      // If user had a prior vote, decrement previous and increment new
+      // Optimistic instant UI update
       nominees.forEach(n => {
         if (n.id === currentVote && n.votes > 0) {
           n.votes -= 1;
         }
         if (n.id === candidateId) {
-          n.votes += 1;
+          n.votes = (n.votes || 0) + 1;
         }
       });
 
@@ -3171,6 +3207,30 @@
 
       const candidate = nominees.find(n => n.id === candidateId);
       showToast(`🗳️ Vote recorded for ${candidate ? candidate.name : 'Candidate'}!`);
+
+      // Sync vote to Firebase Firestore
+      if (db) {
+        try {
+          const batch = db.batch();
+          const targetRef = db.collection('nominees').doc(candidateId);
+          batch.set(targetRef, {
+            votes: firebase.firestore.FieldValue.increment(1)
+          }, { merge: true });
+
+          if (currentVote && currentVote !== candidateId) {
+            const oldRef = db.collection('nominees').doc(currentVote);
+            batch.set(oldRef, {
+              votes: firebase.firestore.FieldValue.increment(-1)
+            }, { merge: true });
+          }
+
+          batch.commit().catch(err => {
+            console.warn('Firestore vote commit warning:', err);
+          });
+        } catch (e) {
+          console.warn('Firestore vote error:', e);
+        }
+      }
     }
 
     function handleNominationSubmit(event) {
@@ -3205,10 +3265,11 @@
         archetype: archetype,
         image: currentUploadedPhotoData || null,
         votes: 1, // starter vote
-        isCustom: true
+        isCustom: true,
+        createdAt: Date.now()
       };
 
-      // If user already voted for someone else, decrement their prior vote
+      // Optimistic update
       const currentVote = getUserVote();
       if (currentVote) {
         nominees.forEach(n => {
@@ -3218,7 +3279,6 @@
         });
       }
 
-      // Add to list and set vote to new candidate
       nominees.push(newCandidate);
       saveNominees(nominees);
       setUserVote(newId);
@@ -3242,6 +3302,25 @@
 
       showToast(`🎉 Welcome to the race, ${name}! Your nomination is published!`);
 
+      // Write candidate to Firebase Firestore (global for all users)
+      if (db) {
+        try {
+          const docData = { ...newCandidate };
+          delete docData.id;
+          db.collection('nominees').doc(newId).set(docData).catch(err => {
+            console.warn('Error publishing nominee to Firestore:', err);
+          });
+
+          if (currentVote) {
+            db.collection('nominees').doc(currentVote).set({
+              votes: firebase.firestore.FieldValue.increment(-1)
+            }, { merge: true }).catch(err => console.warn(err));
+          }
+        } catch (e) {
+          console.warn('Firebase nomination error:', e);
+        }
+      }
+
       // Scroll to newly added card
       setTimeout(() => {
         const el = document.getElementById(`nominee-${newId}`);
@@ -3249,6 +3328,121 @@
           el.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
       }, 250);
+    }
+
+    // Seed default candidates if cloud database is empty
+    function seedDefaultNominees() {
+      if (!db) return;
+      try {
+        const batch = db.batch();
+        DEFAULT_NOMINEES.forEach(n => {
+          const ref = db.collection('nominees').doc(n.id);
+          batch.set(ref, {
+            name: n.name,
+            pitch: n.pitch,
+            image: n.image,
+            archetype: n.archetype,
+            votes: n.votes,
+            badge: n.badge || '',
+            isCustom: false,
+            createdAt: Date.now()
+          }, { merge: true });
+        });
+        batch.commit().then(() => {
+          console.log('Seeded default nominees to Firestore');
+        }).catch(err => console.warn('Seed error:', err));
+      } catch (e) {
+        console.warn('Seed exception:', e);
+      }
+    }
+
+    // Auto-migrate any custom nominee stored on user device (e.g. Pillu bhai) up to cloud
+    function syncLocalCustomNominees(remoteNominees) {
+      if (!db) return;
+      try {
+        const localNominees = getLocalStoredNominees();
+        const remoteIds = new Set(remoteNominees.map(n => n.id));
+        const remoteNames = new Set(remoteNominees.map(n => (n.name || '').toLowerCase().trim()));
+
+        localNominees.forEach(nom => {
+          if (nom.isCustom && !remoteIds.has(nom.id) && !remoteNames.has((nom.name || '').toLowerCase().trim())) {
+            const dataToUpload = {
+              name: nom.name,
+              pitch: nom.pitch || '',
+              archetype: nom.archetype || 'crown',
+              image: nom.image || null,
+              votes: nom.votes || 1,
+              isCustom: true,
+              createdAt: Date.now()
+            };
+            db.collection('nominees').doc(nom.id).set(dataToUpload).then(() => {
+              console.log('Successfully synced local custom nominee to Firestore:', nom.name);
+            }).catch(e => console.warn('Sync failed:', e));
+          }
+        });
+      } catch (e) {
+        console.warn('Local nominee sync error:', e);
+      }
+    }
+
+    // Initialize Real-time Sync with Firestore
+    function initFirestoreSync() {
+      if (!db) {
+        renderVotingArena();
+        return;
+      }
+
+      db.collection('nominees').onSnapshot((snapshot) => {
+        if (snapshot.empty) {
+          seedDefaultNominees();
+          syncLocalCustomNominees([]);
+          return;
+        }
+
+        const remoteList = [];
+        const remoteIdMap = new Map();
+
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const item = { id: doc.id, ...data };
+          remoteList.push(item);
+          remoteIdMap.set(doc.id, item);
+        });
+
+        // Ensure default 3 are also present in Firestore if missing
+        DEFAULT_NOMINEES.forEach(def => {
+          if (!remoteIdMap.has(def.id)) {
+            db.collection('nominees').doc(def.id).set({
+              name: def.name,
+              pitch: def.pitch,
+              image: def.image,
+              archetype: def.archetype,
+              votes: def.votes,
+              badge: def.badge || '',
+              isCustom: false,
+              createdAt: Date.now()
+            }, { merge: true }).catch(err => console.warn(err));
+          }
+        });
+
+        // Sort: default 3 primary contenders first, then other nominees by votes descending
+        const primaryOrder = { vaibhav_prajapat: 1, lalit_yadav: 2, inder_yadav: 3 };
+        remoteList.sort((a, b) => {
+          const orderA = primaryOrder[a.id] || 999;
+          const orderB = primaryOrder[b.id] || 999;
+          if (orderA !== orderB) return orderA - orderB;
+          return (b.votes || 0) - (a.votes || 0);
+        });
+
+        activeNominees = remoteList;
+        saveNominees(remoteList);
+        renderVotingArena();
+
+        syncLocalCustomNominees(remoteList);
+      }, (error) => {
+        console.warn('Firestore real-time listener error:', error);
+        renderVotingArena();
+      });
     }
 
     function scrollToVoting() {
@@ -3311,8 +3505,8 @@
         reader.onload = function(event) {
           const img = new Image();
           img.onload = function() {
-            // Compress and resize image to max 400x400 to keep localStorage fast and lightweight
-            const maxDim = 400;
+            // Resize image to max 360x360 and compress to keep Firestore document fast & light (~20KB)
+            const maxDim = 360;
             let w = img.width;
             let h = img.height;
             if (w > maxDim || h > maxDim) {
@@ -3331,7 +3525,7 @@
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, w, h);
 
-            const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.85);
+            const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.8);
             currentUploadedPhotoData = compressedDataUrl;
 
             photoPreviewImg.src = compressedDataUrl;
@@ -3349,8 +3543,9 @@
       removePhotoBtn.addEventListener('click', resetPhotoUploader);
     }
 
-    // Initialize Voting Arena
+    // Initialize Voting Arena & Firebase Real-time Sync
     renderVotingArena();
+    initFirestoreSync();
   </script>
 </body>
 </html>
